@@ -19,6 +19,8 @@ docker-compose up -d
 ```
 ### (2)&emsp;访问项目
 浏览器访问 ip:9000
+<br>
+默认用户名:aa  密码:1
 
 
 ### (3)&emsp;示例
