@@ -225,8 +225,8 @@ export default {
           {
             name: 'Disk info',
             type: 'pie',
-            radius: '61%',
-            center: ['50%', '60%'],
+            radius: '59%',
+            center: ['50%', '65%'],
             data: [{
               value: '', name: 'used', convertvalue: '', Percent: '', itemStyle: { color: '#F56C6C' }
             },
@@ -252,9 +252,9 @@ export default {
                   'color': 'inherit',
                   'borderColor': 'inherit',
                   'borderWidth': 1,
-                  'padding': [2, 3],
+                  'padding': [2, 2],
                   'height': 10,
-                  'width': '63%'
+                  'width': '66%'
                 },
                 'rect': {
                   'height': 2,
