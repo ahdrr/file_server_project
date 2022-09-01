@@ -35,7 +35,7 @@ https://user-images.githubusercontent.com/45720137/187822669-6ec78734-cc96-4bab-
 
 ### 重启服务
 ```
-docker-compose up -d
+docker-compose restart
 ```
 
 
