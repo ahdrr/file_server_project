@@ -15,6 +15,3 @@ users:
     -
         username: "aa"
         password: "1"
-    - 
-        username: "bb"
-        password: "2"
