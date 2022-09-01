@@ -1,0 +1,34 @@
+version: "3"
+services:
+  go_file_server:
+    image: go_server
+    build:
+      context: ./go_web_file
+      dockerfile: dockerfile
+    container_name: go_file_server
+    ports:
+      - 16650:16650
+    volumes:
+      #- ./conf:/etc/goconf
+      - ./basedir:/basedir
+    networks:
+        file_server_net:
+           aliases:
+              - file_api_server  
+
+  nginx_vue:
+    #image: nginx:1.23.1-alpine 
+    build:
+      context: ./vue01_file
+      dockerfile: dockerfile
+    container_name: nginx_vue
+    volumes:
+        - ./nginx_conf:/etc/nginx/conf.d
+    ports:
+      - 9000:80
+    networks:
+        file_server_net:
+
+networks:
+  file_server_net:
+

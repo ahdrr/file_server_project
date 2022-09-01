@@ -1,0 +1,9 @@
+logfile: "./agent.log"
+loglevel: "info"
+users:
+    -
+        username: "aa"
+        password: "1"
+    - 
+        username: "bb"
+        password: "2"
