@@ -30,7 +30,7 @@ func Load(r *gin.Engine) {
 	// 权限路由组
 	authRouter := r.Group("/").Use(middlewares.JWTAuth())
 	{
-		authRouter.GET(("/index/*pathurl"), index)
+		authRouter.GET(("/list/*pathurl"), index)
 		authRouter.GET(("/down/*pathurl"), down)
 		authRouter.Any(("/up/*pathurl"), middlewares.Check_notMethod("POST"), up)
 		authRouter.Any(("/del/*pathurl"), middlewares.Check_notMethod("POST"), delete)

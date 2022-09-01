@@ -51,7 +51,7 @@ func check_pathurl(c *gin.Context) (parse_request model.Parse_request_struct, er
 	return parse_request, err
 }
 
-func index(c *gin.Context) {
+func list(c *gin.Context) {
 	parse_request, err := check_pathurl(c)
 	if err != nil {
 		return

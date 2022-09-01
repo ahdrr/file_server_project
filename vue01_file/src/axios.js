@@ -57,7 +57,7 @@ export default {
   },
   // 获取文件
   getFiles (filepath) {
-    let realurl = getRealurl('/api/index', filepath)
+    let realurl = getRealurl('/api/list', filepath)
     return instance.get(realurl)
   },
   // 下载文件
