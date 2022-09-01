@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"errors"
+	"filrserver/pkgs/config"
 	"filrserver/pkgs/zlog"
 	"net/http"
 	"regexp"
@@ -30,7 +31,7 @@ var (
 // JWTAuth 中间件，检查token
 func JWTAuth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		tokenString := ctx.Request.Header.Get("Authorization")
+		tokenString := ctx.Request.Header.Get("token")
 		if tokenString == "" {
 			zlog.SugLog.Warn("请求未携带token，无权限访问", zap.Any("data", map[string]interface{}{
 				"url":    ctx.Request.URL,
@@ -44,7 +45,10 @@ func JWTAuth() gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
-
+		if tokenString == config.ViperConfig.GetString("token") {
+			return
+		}
+		
 		// parseToken 解析token包含的信息
 		_, err := ParseToken(tokenString)
 		if err != nil {

@@ -399,7 +399,7 @@ export default {
             this.$message.success('文件夹新建成功')
             this.getFileList()
           } else {
-            this.$message.error('文件夹新建失败')
+            this.$message.error('文件夹新建失败: ' + response.data.msg)
           }
         }
         )
@@ -579,7 +579,7 @@ export default {
     // 获取当前token
     getupheads () {
       let token = this.$store.state.token
-      return { Authorization: token }
+      return { token: token }
     },
     // 上传失败回调
     handupERR () {

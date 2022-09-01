@@ -6,7 +6,6 @@ import (
 	"filrserver/pkgs/model"
 	"filrserver/pkgs/systeminfo"
 
-
 	"io/fs"
 	"os"
 
@@ -144,29 +143,28 @@ func delete(c *gin.Context) {
 		return
 	}
 
-	if parse_request.Statinfo.IsDir() {
-		if parse_request.Real_path == config.ViperConfig.GetString("basedir") {
-			c.AbortWithStatusJSON(200, gin.H{
-				"code": 2003,
-				"msg":  "cat not delete {{basedir}}",
-			})
-			return
-		}
-		err := os.Remove(parse_request.Real_path)
-		if err != nil {
-			c.AbortWithStatusJSON(200, gin.H{
-				"code": 2003,
-				"msg":  err.(*fs.PathError).Err.Error(),
-			},
-			)
-			return
-		}
+	if parse_request.Real_path == config.ViperConfig.GetString("basedir") {
 		c.AbortWithStatusJSON(200, gin.H{
-			"code": 200,
-			"msg":  "dir is delete",
+			"code": 2003,
+			"msg":  "cat not delete {{basedir}}",
+		})
+		return
+	}
+	err = os.Remove(parse_request.Real_path)
+	if err != nil {
+		c.AbortWithStatusJSON(200, gin.H{
+			"code": 2003,
+			"msg":  err.(*fs.PathError).Err.Error(),
 		},
 		)
+		return
 	}
+	c.AbortWithStatusJSON(200, gin.H{
+		"code": 200,
+		"msg":  "dir is delete",
+	},
+	)
+
 }
 
 func rename(c *gin.Context) {

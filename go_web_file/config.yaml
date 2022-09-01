@@ -8,6 +8,8 @@ basedir: "/basedir"
 ginmode: "release" 
 # 监听端口
 port: "16650"
+# 授权token,简化curl调用
+token: "mdy5e8nt6"
 #授权用户
 users:
     -
