@@ -9,7 +9,7 @@ services:
     ports:
       - 16650:16650
     volumes:
-      #- ./conf:/etc/goconf
+      - ./goconf:/etc/goconf
       - ./basedir:/basedir
     networks:
         file_server_net:

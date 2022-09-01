@@ -1,0 +1,24 @@
+#日志位置
+logfile: "/var/log/server.log"
+#日志级别
+loglevel: "debug"
+#工作目录
+basedir: "/basedir"
+#可选debug调试模式，release生产模式
+ginmode: "release" 
+# 监听端口
+port: "16650"
+#授权用户
+users:
+    -
+        username: "aa"
+        password: "1"
+
+
+
+
+
+
+
+
+
