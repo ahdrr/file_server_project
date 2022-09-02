@@ -622,8 +622,8 @@ p.one {
 }
 
 .el-upload-dragger {
-  height: 200px;
-  width: 290px;
+  height: 200px !important;
+  width: 300px !important;
 }
 
 .a666 {
