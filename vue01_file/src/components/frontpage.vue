@@ -623,7 +623,7 @@ p.one {
 
 .el-upload-dragger {
   height: 200px;
-  width: 300px;
+  width: 290px;
 }
 
 .a666 {
