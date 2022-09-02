@@ -225,7 +225,7 @@ export default {
           {
             name: 'Disk info',
             type: 'pie',
-            radius: '59%',
+            radius: '60%',
             center: ['50%', '65%'],
             data: [{
               value: '', name: 'used', convertvalue: '', Percent: '', itemStyle: { color: '#F56C6C' }
@@ -254,11 +254,11 @@ export default {
                   'borderWidth': 1,
                   'padding': [2, 2],
                   'height': 10,
-                  'width': '66%'
+                  'width': '55%'
                 },
                 'rect': {
-                  'height': 2,
-                  'width': 10,
+                  'height': 8,
+                  // 'width': '5%',
                   'backgroundColor': 'inherit'
                 }
               }
@@ -268,9 +268,9 @@ export default {
               lineStyle: {
                 color: '#b4adad'
               },
-              smooth: 0.2,
-              length: 10,
-              length2: 20
+              smooth: 0.3,
+              length: 5,
+              length2: 15
             },
             emphasis: {
               itemStyle: {
@@ -372,12 +372,6 @@ export default {
             }
           ]
         }
-        if (response.status === 401) {
-          // 不成功跳转回登录页
-          this.$router.push('/login')
-          // 并且清除掉这个token
-          this.$store.dispatch('UserLogout')
-        }
       }
       )
     },
@@ -428,22 +422,21 @@ export default {
       axios.getFiles(thisrequesturl).then((response) => {
         if (response.status === 200) {
           this.fileList = response.data.data
-          // if (filename) {
-          //  //this.pathurl.push(filename)
-          // }
         }
-        if (response.status === 401) {
-          // 不成功跳转回登录页
-          this.$router.push('/login')
-          // 并且清除掉这个token
-          this.$store.dispatch('UserLogout')
-        }
+        // if (response.status === 401) {
+        // 不成功跳转回登录页
+        //  this.$router.push('/login')
+        // 并且清除掉这个token
+        // this.$store.dispatch('UserLogout')
+        // }
       }
-      ).catch(() => {
-        this.$message({
-          type: 'error',
-          message: '后端请求异常'
-        })
+      ).catch((response) => {
+        if (response.status !== 401) {
+          this.$message({
+            type: 'error',
+            message: '后端请求异常'
+          })
+        }
       })
     },
     // 监听 pagesize 改变的事件
