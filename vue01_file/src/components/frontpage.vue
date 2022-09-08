@@ -474,7 +474,7 @@ export default {
         this.$message.error('暂时不支持目录下载')
         return
       }
-      let realpath = this.getRealpath(row.name)
+      let realpath = this.getRealpath() + '/' + row.name
       axios.download(realpath, { responseType: 'blob' }).then((response) => {
         const { data, headers } = response
         // const fileName = headers['content-disposition'].replace(/\w+;filename=(.*)/, '$1')
