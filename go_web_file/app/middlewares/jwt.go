@@ -15,6 +15,7 @@ import (
 
 type CustomClaims struct {
 	Username string `json:"username"`
+	Role     string `json:"role"`
 	jwt.StandardClaims
 }
 
@@ -48,9 +49,9 @@ func JWTAuth() gin.HandlerFunc {
 		if tokenString == config.ViperConfig.GetString("token") {
 			return
 		}
-		
+
 		// parseToken 解析token包含的信息
-		_, err := ParseToken(tokenString)
+		parse_relustr, err := ParseToken(tokenString)
 		if err != nil {
 			if err == TokenExpired {
 				zlog.SugLog.Warn("token 过期", zap.Any("data", map[string]interface{}{
@@ -78,13 +79,15 @@ func JWTAuth() gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
+		ctx.Set("role", parse_relustr.Role)
 	}
 }
 
 // CreateToken 生成一个token
-func CreateToken(username string) (string, error) {
+func CreateToken(username string, role string) (string, error) {
 	claims := CustomClaims{
 		Username: username,
+		Role:     role,
 		//5分钟后过期,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 5).Unix()},
@@ -136,7 +139,7 @@ func RefreshToken(tokenString string) (string, error) {
 	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
 		jwt.TimeFunc = time.Now
 		claims.StandardClaims.ExpiresAt = time.Now().Add(2 * time.Hour).Unix()
-		return CreateToken(claims.Username)
+		return CreateToken(claims.Username, claims.Role)
 	}
 	return "", TokenInvalid
 }

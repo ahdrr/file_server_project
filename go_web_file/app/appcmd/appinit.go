@@ -6,6 +6,7 @@ import (
 	"filrserver/pkgs/config"
 	"filrserver/pkgs/zlog"
 	"os"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +25,9 @@ func Start() {
 
 func initRouter() *gin.Engine {
 	// 检查工作目录
-	_, err := os.Stat(config.ViperConfig.GetString("basedir"))
+	basedir := config.ViperConfig.GetString("basedir")
+
+	_, err := os.Stat(basedir)
 	zlog.Fatalerror(err)
 	//设置运行模式
 	var ginmode string = config.ViperConfig.GetString("ginmode")
@@ -33,7 +36,8 @@ func initRouter() *gin.Engine {
 	} else if ginmode != "debug" {
 		zlog.SugLog.Fatalf("运行级别ginmode设置错误，无法识别%v", ginmode)
 	}
-
+	//初始化权限目录
+	init_role_dir(basedir)
 	// 初始化引擎
 	r := gin.New()
 
@@ -45,4 +49,19 @@ func initRouter() *gin.Engine {
 	r.Use(middlewares.CORSMiddleware())
 	routes.Load(r)
 	return r
+}
+
+func init_role_dir(basedir string) {
+	for _, u := range config.Users.Users {
+		go func(role string) {
+			real_path := filepath.Join(basedir, role)
+			_, err := os.Stat(real_path)
+			if err != nil && os.IsNotExist(err) {
+				os.MkdirAll(real_path, os.ModePerm)
+			} else {
+				zlog.Fatalerror(err)
+			}
+		}(u.Role)
+	}
+
 }

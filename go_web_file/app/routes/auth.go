@@ -37,12 +37,11 @@ func authHandler(c *gin.Context) {
 			"msg":  "无效的参数",
 		})
 		return
-
 	}
 	// 校验用户名和密码是否正确
-	if chek_user(user.Username, user.Password) {
+	if role, ok := chek_user(user.Username, user.Password); ok {
 		// 生成Token
-		tokenString, _ := middlewares.CreateToken(user.Username)
+		tokenString, _ := middlewares.CreateToken(user.Username, role)
 		c.JSON(http.StatusOK, gin.H{
 			"code": 200,
 			"msg":  "success",
@@ -60,11 +59,11 @@ func authHandler(c *gin.Context) {
 	return
 }
 
-func chek_user(username string, password string) bool {
+func chek_user(username string, password string) (string, bool) {
 	for _, u := range config.Users.Users {
 		if u.Username == username && u.Password == password {
-			return true
+			return u.Role, true
 		}
 	}
-	return false
+	return "", false
 }

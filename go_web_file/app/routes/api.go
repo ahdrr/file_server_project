@@ -19,7 +19,7 @@ import (
 func get_realpath(c *gin.Context) (string, string) {
 	basedir := config.ViperConfig.GetString("basedir")
 	pathurl := c.Param("pathurl")
-	real_path := filepath.Join(basedir, pathurl)
+	real_path := filepath.Join(basedir,c.GetString("role"), pathurl)
 	return pathurl, real_path
 }
 
