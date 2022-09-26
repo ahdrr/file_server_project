@@ -32,8 +32,8 @@ https://user-images.githubusercontent.com/45720137/187822669-6ec78734-cc96-4bab-
 
 ### (4)&emsp;自定义配置
 
-### 修改配置文件:  goconf/config.yaml (添加一个cc用户)
-![image](https://user-images.githubusercontent.com/45720137/187824473-9efadbb1-ed91-4cac-8af3-a7926e51d8e8.png)
+### 修改配置文件:  goconf/config.yaml (添加一个bb用户)
+![image](https://user-images.githubusercontent.com/45720137/192236776-d0805618-bd65-4d54-9a87-46e33b3da4b0.png)
 
 ### 重启服务
 ```
