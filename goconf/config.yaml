@@ -15,11 +15,7 @@ users:
     -
         username: "aa"
         password: "1"
-
-
-
-
-
-
+        #相对于basedir，如果/{{basedir}}/{{role}}目录不存在，服务启动时会自动创建
+        role: '/'
 
 
