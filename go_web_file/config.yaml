@@ -7,9 +7,9 @@ basedir: "/basedir"
 #可选debug调试模式，release生产模式
 ginmode: "release" 
 # 监听端口
-port: "16882"
+port: "16650"
 # 授权token,简化curl调用
-token: "1312300"
+token: "mdy5e8nt6"
 #授权用户
 users:
     -
