@@ -45,8 +45,9 @@ function getRealurl (url, filepath) {
   }
   return url + '/' + filepath
 }
-
+export {getRealurl}
 export default {
+  getRealurl,
   // 用户注册
   userRegister (data) {
     return instance.post('/api/register', data)

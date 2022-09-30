@@ -20,6 +20,7 @@
     "node-sass": "^7.0.1",
     "sass": "^1.54.4",
     "sass-loader": "^5.0.0",
+    "streamsaver": "^2.0.6",
     "vue": "^2.7.8",
     "vue-echarts": "^6.2.3",
     "vue-router": "^3.0.1",

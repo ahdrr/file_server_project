@@ -177,8 +177,9 @@
 </template>
 
 <script>
-import axios from '../axios.js'
+import axios, {getRealurl} from '../axios.js'
 import VChart, { THEME_KEY } from 'vue-echarts'
+import streamSaver from 'streamsaver'
 
 export default {
   components: {
@@ -470,29 +471,59 @@ export default {
     },
     // 下载文件
     async downloadfile (row) {
-      if (row.filetype === 'dir') {
-        this.$message.error('暂时不支持目录下载')
-        return
-      }
       let realpath = this.getRealpath() + '/' + row.name
-      axios.download(realpath, { responseType: 'blob' }).then((response) => {
-        const { data, headers } = response
-        // const fileName = headers['content-disposition'].replace(/\w+;filename=(.*)/, '$1')
-        const fileName = row.name
-        // 此处当返回json文件时需要先对data进行JSON.stringify处理，其他类型文件不用做处理
-        // const blob = new Blob([JSON.stringify(data)], ...)
-        const blob = new Blob([data], { type: headers['content-type'] })
-        let dom = document.createElement('a')
-        let url = window.URL.createObjectURL(blob)
-        dom.href = url
-        dom.download = decodeURI(fileName)
-        dom.style.display = 'none'
-        document.body.appendChild(dom)
-        dom.click()
-        dom.parentNode.removeChild(dom)
-        window.URL.revokeObjectURL(url)
-      }
-      )
+      let realurl = getRealurl('/api/down', realpath)
+      fetch(realurl, {
+        method: 'GET',
+        cache: 'no-cache',
+        headers: this.getupheads()
+      }).then(res => {
+        const fileStream = streamSaver.createWriteStream(row.name,
+          {
+            size: res.headers.get('content-length')
+          })
+
+        const readableStream = res.body
+
+        // more optimized
+        if (window.WritableStream && readableStream.pipeTo) {
+          return readableStream.pipeTo(fileStream)
+            .then(() => console.log('done writing'))
+        }
+        window.writer = fileStream.getWriter()
+
+        const reader = res.body.getReader()
+        const pump = () => reader.read()
+          .then(res => res.done
+            ? window.writer.close()
+            : window.writer.write(res.value).then(pump))
+
+        pump()
+      })
+
+      // if (row.filetype === 'dir') {
+      //  this.$message.error('暂时不支持目录下载')
+      //  return
+      // }
+      // let realpath = this.getRealpath() + '/' + row.name
+      // axios.download(realpath, { responseType: 'blob' }).then((response) => {
+      //  const { data, headers } = response
+      //  // const fileName = headers['content-disposition'].replace(/\w+;filename=(.*)/, '$1')
+      //  const fileName = row.name
+      //  // 此处当返回json文件时需要先对data进行JSON.stringify处理，其他类型文件不用做处理
+      //  // const blob = new Blob([JSON.stringify(data)], ...)
+      //  const blob = new Blob([data], { type: headers['content-type'] })
+      //  let dom = document.createElement('a')
+      //  let url = window.URL.createObjectURL(blob)
+      //  dom.href = url
+      //  dom.download = decodeURI(fileName)
+      //  dom.style.display = 'none'
+      //  document.body.appendChild(dom)
+      //  dom.click()
+      //  dom.parentNode.removeChild(dom)
+      //  window.URL.revokeObjectURL(url)
+      // }
+      // )
     },
     // 删除文件
     async renamefile (row) {
