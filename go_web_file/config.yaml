@@ -16,7 +16,3 @@ users:
         username: "aa"
         password: "1"
         role: '/'
-    -
-        username: "bb"
-        password: "1"
-        role: '/ada'
