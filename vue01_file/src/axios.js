@@ -85,5 +85,8 @@ export default {
   // 获取磁盘信息
   getdiskinfo () {
     return instance.get('/api/sysinfo/disk')
+  },
+  axios_all (tasks) {
+    return axios.all(tasks)
   }
 }

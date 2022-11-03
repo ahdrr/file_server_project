@@ -85,10 +85,18 @@
                   ></el-button>
                 </el-input>
               </el-col>
-              <el-col :span="4" :push="3">
+              <el-col :span="3" :push="3">
                 <el-button type="primary" @click="addnewdir()"
                   >新建文件夹</el-button
                 >
+              </el-col>
+              <el-col :span="1" :push="4">
+                <el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  @click="multipleDelete()"
+                >
+                </el-button>
               </el-col>
             </el-row>
           </el-card>
@@ -100,7 +108,10 @@
             stripe
             style="width: 100%"
             :default-sort="{ prop: 'filetype', order: 'ascending' }"
+            @selection-change="handleSelectionChange"
           >
+            >
+            <el-table-column type="selection" width="55"> </el-table-column>
             <el-table-column type="index" label="序"></el-table-column>
             <el-table-column label="文件名" prop="name" width="">
               <template slot-scope="scope">
@@ -177,7 +188,7 @@
 </template>
 
 <script>
-import axios, {getRealurl} from '../axios.js'
+import axios, { getRealurl } from '../axios.js'
 import VChart, { THEME_KEY } from 'vue-echarts'
 import streamSaver from 'streamsaver'
 
@@ -303,7 +314,9 @@ export default {
       },
       fileList: [],
       total: 0,
-      editForm: {}
+      editForm: {},
+      // 表格多选值
+      multipleSelection: []
     }
   },
   watch: {
@@ -318,8 +331,46 @@ export default {
     this.parshPathurl()
   },
   methods: {
-    // searchFileList
 
+    handleSelectionChange (val) {
+      this.multipleSelection = val
+    },
+    async multipleDelete () {
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          type: 'info',
+          message: '请勾选文件'
+        })
+        return
+      }
+      const checkmess = await this.checkAgain()
+      if (checkmess) {
+        return checkmess
+      }
+      let task = []
+      for (let i in this.multipleSelection) {
+        let realpath = this.getRealpath() + '/' + this.multipleSelection[i].name
+        task.push(
+          axios.removefile(realpath)
+        )
+      }
+
+      axios.axios_all(task).then(results => {
+        let successnm = 0
+        let faildnm = 0
+        for (let i in results) {
+          if (results[i].data.code === 200) {
+            successnm += 1
+          } else {
+            faildnm += 1
+          }
+        }
+        this.$message.success(successnm + '个删除成功, ' + faildnm + '个删除失败')
+      })
+      this.multipleSelection = []
+    },
+
+    // searchFileList
     searchFileList () {
       this.$message.success('搜索功能暂未实现')
     },
@@ -555,10 +606,25 @@ export default {
       })
     },
     // 删除文件
-    async removefile (row) {
+
+    sendDeleteRequest (row) {
+      // 发送删除请求
+      let realpath = this.getRealpath() + '/' + row.name
+      axios.removefile(realpath).then((response) => {
+        if (response.data.code === 200) {
+          this.$message.success('删除成功')
+          this.getFileList()
+        } else {
+          this.$message.error('删除失败: ' + response.data.msg)
+        }
+      }
+      )
+    },
+
+    async checkAgain () {
       // 弹框提示用户是否删除
       const confirmResult = await this.$confirm(
-        '此操作将永久删除' + row.name + ', 是否继续?',
+        '此操作将永久删除, 是否继续?',
         '提示',
         {
           confirmButtonText: '确定',
@@ -571,17 +637,14 @@ export default {
       if (confirmResult !== 'confirm') {
         return this.$message.info('已取消删除')
       }
-      // 发送删除请求
-      let realpath = this.getRealpath() + '/' + row.name
-      axios.removefile(realpath).then((response) => {
-        if (response.data.code === 200) {
-          this.$message.success('删除成功')
-          this.getFileList()
-        } else {
-          this.$message.error('删除失败: ' + response.data.msg)
-        }
+      return false
+    },
+    async removefile (row) {
+      const checkmess = await this.checkAgain()
+      if (checkmess) {
+        return checkmess
       }
-      )
+      this.sendDeleteRequest(row)
     },
     // 上传文件前校验
     onBeforeUpload (file) {
