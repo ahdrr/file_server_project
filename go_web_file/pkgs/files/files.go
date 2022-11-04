@@ -6,13 +6,14 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
 	"github.com/h2non/filetype"
 )
 
-func IterDirectory(dirPath string, sinfo fs.FileInfo) (dirs model.Dir_stat, err error) {
+func IterDirectory(parse_request model.Parse_request_struct) (dirs model.Dir_stat, err error) {
 	var f model.File
 	var ftype string
+	dirPath := parse_request.Real_path
+	sinfo := parse_request.Statinfo
 	dirs = model.Dir_stat{
 		Dmsg: model.Dmsg{
 			Code: 200,

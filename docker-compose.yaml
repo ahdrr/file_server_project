@@ -6,6 +6,8 @@ services:
       context: ./go_web_file
       dockerfile: dockerfile
     container_name: go_file_server
+    environment:
+      - TZ=Asia/Shanghai
     ports:
       - 16650:16650
     volumes:

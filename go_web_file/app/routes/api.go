@@ -56,7 +56,7 @@ func list(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	fb, err := files.IterDirectory(parse_request.Real_path, parse_request.Statinfo)
+	fb, err := files.IterDirectory(parse_request)
 	if err != nil {
 		c.AbortWithStatusJSON(200, gin.H{
 			"code": 2003,
