@@ -367,6 +367,7 @@ export default {
         }
         this.$message.success(successnm + '个删除成功, ' + faildnm + '个删除失败')
       })
+      this.getFileList()
       this.multipleSelection = []
     },
 
