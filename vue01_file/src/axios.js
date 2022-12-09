@@ -43,7 +43,7 @@ function getRealurl (url, filepath) {
   if (!filepath) {
     return url + '/'
   }
-  return url + '/' + filepath
+  return url + filepath
 }
 export {getRealurl}
 export default {
@@ -59,6 +59,7 @@ export default {
   // 获取文件
   getFiles (filepath) {
     let realurl = getRealurl('/api/list', filepath)
+
     return instance.get(realurl)
   },
   // 下载文件

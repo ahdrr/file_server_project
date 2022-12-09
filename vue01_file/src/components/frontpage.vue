@@ -190,7 +190,7 @@
 <script>
 import axios, { getRealurl } from '../axios.js'
 import VChart, { THEME_KEY } from 'vue-echarts'
-import streamSaver from 'streamsaver'
+// import streamSaver from 'streamsaver'
 
 export default {
   components: {
@@ -349,7 +349,7 @@ export default {
       }
       let task = []
       for (let i in this.multipleSelection) {
-        let realpath = this.getRealpath() + '/' + this.multipleSelection[i].name
+        let realpath = this.getRealpath() + this.multipleSelection[i].name
         task.push(
           axios.removefile(realpath)
         )
@@ -464,7 +464,10 @@ export default {
     },
     // 获取url路径
     getRealpath () {
-      let realpath = this.$route.path.replace(/\/frontpage\/*/g, '')
+      let realpath = this.$route.path.replace(/(frontpage\/*)/g, '')
+      if (realpath !== '/') {
+        realpath = realpath + '/'
+      }
       return realpath
     },
     // 获取文件列表
@@ -523,35 +526,33 @@ export default {
     },
     // 下载文件
     async downloadfile (row) {
-      let realpath = this.getRealpath() + '/' + row.name
-      let realurl = getRealurl('/api/down', realpath)
-      fetch(realurl, {
-        method: 'GET',
-        cache: 'no-cache',
-        headers: this.getupheads()
-      }).then(res => {
-        const fileStream = streamSaver.createWriteStream(row.name,
-          {
-            size: res.headers.get('content-length')
-          })
-
-        const readableStream = res.body
-
-        // more optimized
-        if (window.WritableStream && readableStream.pipeTo) {
-          return readableStream.pipeTo(fileStream)
-            .then(() => console.log('done writing'))
-        }
-        window.writer = fileStream.getWriter()
-
-        const reader = res.body.getReader()
-        const pump = () => reader.read()
-          .then(res => res.done
-            ? window.writer.close()
-            : window.writer.write(res.value).then(pump))
-
-        pump()
-      })
+      let realpath = this.getRealpath() + row.name
+      let realurl = getRealurl('/api/down', realpath + '?token=' + this.$store.state.token)
+      location.href = realurl
+      // fetch(realurl, {
+      //  method: 'GET',
+      //  cache: 'no-cache',
+      //  headers: this.getupheads()
+      // }).then(res => {
+      //  const fileStream = streamSaver.createWriteStream(row.name,
+      //    {
+      //      size: res.headers.get('content-length')
+      //    })
+      //  const readableStream = res.body
+      //  // more optimized
+      //  if (window.WritableStream && readableStream.pipeTo) {
+      //    return readableStream.pipeTo(fileStream)
+      //      .then(() => console.log('done writing'))
+      //  }
+      //  window.writer = fileStream.getWriter()
+      //  const reader = res.body.getReader()
+      //  const pump = () => reader.read()
+      //    .then(res => res.done
+      //      ? window.writer.close()
+      //      : window.writer.write(res.value).then(pump))
+      //  pump()
+      // }
+      // )
 
       // if (row.filetype === 'dir') {
       //  this.$message.error('暂时不支持目录下载')
@@ -585,7 +586,7 @@ export default {
         inputPattern: /^\w+$/,
         inputErrorMessage: '邮箱格式不正确'
       }).then(({ value }) => {
-        let realpath = this.getRealpath() + '/' + row.name
+        let realpath = this.getRealpath() + row.name
         let data = JSON.stringify({
           'newname': value
         })
@@ -610,7 +611,7 @@ export default {
 
     sendDeleteRequest (row) {
       // 发送删除请求
-      let realpath = this.getRealpath() + '/' + row.name
+      let realpath = this.getRealpath() + row.name
       axios.removefile(realpath).then((response) => {
         if (response.data.code === 200) {
           this.$message.success('删除成功')

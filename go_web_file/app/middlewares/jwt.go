@@ -33,19 +33,27 @@ var (
 func JWTAuth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		tokenString := ctx.Request.Header.Get("token")
+
+
 		if tokenString == "" {
-			zlog.SugLog.Warn("请求未携带token，无权限访问", zap.Any("data", map[string]interface{}{
-				"url":    ctx.Request.URL,
-				"params": ctx.Params,
-			}))
-			ctx.JSON(http.StatusUnauthorized, gin.H{
-				"error_code": 1,
-				"message":    "请求未携带token，无权限访问",
-				"data":       map[string]interface{}{},
-			})
-			ctx.Abort()
-			return
+			tokenString = ctx.Query("token")
+			zlog.SugLog.Warn(tokenString)
+			if tokenString == "" {
+
+				zlog.SugLog.Warn("请求未携带token，无权限访问", zap.Any("data", map[string]interface{}{
+					"url":    ctx.Request.URL,
+					"params": ctx.Params,
+				}))
+				ctx.JSON(http.StatusUnauthorized, gin.H{
+					"error_code": 1,
+					"message":    "请求未携带token，无权限访问",
+					"data":       map[string]interface{}{},
+				})
+				ctx.Abort()
+				return
+			}
 		}
+
 		if tokenString == config.ViperConfig.GetString("token") {
 			return
 		}
