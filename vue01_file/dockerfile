@@ -1,11 +1,11 @@
-FROM node:12.22.12-buster as builder
+FROM node:17.9.0-alpine as builder
 WORKDIR /home
 COPY . .
 RUN set -x \
     && npm config set registry https://registry.npm.taobao.org \
-    && npm install cnpm@7.1.0 -g \
+    && npm install cnpm -g \
     && cnpm install \
-    && npm run build
+    && cnpm run build
 
 FROM nginx:1.23.1-alpine
 COPY --from=builder /home/dist /usr/share/nginx/html
