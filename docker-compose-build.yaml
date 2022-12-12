@@ -1,7 +1,7 @@
 version: "3"
 services:
   go_fileserver:
-    image: go_fileserver:2022_12_12
+    image: ahdrr/go_fileserver:2022_12_12
     build:
       context: ./go_web_file
       dockerfile: dockerfile
@@ -19,7 +19,7 @@ services:
               - file_api_server
 
   nginx_vue:
-    image: nging_vue:2022_12_12
+    image: ahdrr/nging_vue:2022_12_12
     build:
       context: ./vue01_file
       dockerfile: dockerfile

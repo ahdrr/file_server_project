@@ -16,7 +16,7 @@ services:
               - file_api_server
 
   nginx_vue:
-    image: ahdrr/nging_vue:2022_12_12
+    image: ahdrr/nginx_vue:2022_12_12
     container_name: nginx_vue
     volumes:
         - ./nginx_conf:/etc/nginx/conf.d
