@@ -17,10 +17,6 @@ cd file_server_project
 ```
 docker-compose up -d
 ```
-#### 如果构建失败,关闭buildx功能再试
-```
-DOCKER_BUILDKIT=0 docker-compose up -d
-```
 
 ### (2)&emsp;访问项目
 浏览器访问 ip:9000
