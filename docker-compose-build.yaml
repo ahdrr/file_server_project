@@ -2,6 +2,9 @@ version: "3"
 services:
   go_fileserver:
     image: go_fileserver:2022_12_12
+    build:
+      context: ./go_web_file
+      dockerfile: dockerfile
     container_name: go_file_server
     environment:
       - TZ=Asia/Shanghai
@@ -17,6 +20,9 @@ services:
 
   nginx_vue:
     image: nging_vue:2022_12_12
+    build:
+      context: ./vue01_file
+      dockerfile: dockerfile
     container_name: nginx_vue
     volumes:
         - ./nginx_conf:/etc/nginx/conf.d
