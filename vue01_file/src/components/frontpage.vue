@@ -578,7 +578,7 @@ export default {
       // }
       // )
     },
-    // 删除文件
+    // 重命名文件
     async renamefile (row) {
       await this.$prompt('请输入新名称', '提示', {
         confirmButtonText: '确定',
@@ -662,8 +662,7 @@ export default {
     },
     // 获取上传文件接口
     getupRealpath () {
-      let realpath = this.$route.path.replace(/\/frontpage\/*/g, '')
-      return '/api/up' + realpath + '/'
+      return '/api/up' + this.getRealpath() + '/'
     },
     // 获取当前token
     getupheads () {
