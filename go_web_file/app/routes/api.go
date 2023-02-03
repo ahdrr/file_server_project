@@ -133,7 +133,7 @@ func delete(c *gin.Context) {
 		})
 		return
 	}
-	err = os.Remove(parse_request.Real_path)
+	err = os.RemoveAll(parse_request.Real_path)
 	if err != nil {
 		c.AbortWithStatusJSON(200, gin.H{
 			"code": 2003,
