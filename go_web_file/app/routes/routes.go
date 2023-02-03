@@ -30,12 +30,13 @@ func Load(r *gin.Engine) {
 	// 权限路由组
 	authRouter := r.Group("/").Use(middlewares.JWTAuth())
 	{
-		authRouter.GET(("/list/*pathurl"), list)
+		authRouter.POST(("/list/*pathurl"), list)
 		authRouter.GET(("/down/*pathurl"), down)
 		authRouter.Any(("/up/*pathurl"), middlewares.Check_notMethod("POST"), up)
 		authRouter.Any(("/del/*pathurl"), middlewares.Check_notMethod("POST"), delete)
 		authRouter.POST(("/reset/*pathurl"), rename)
 		authRouter.POST(("/create/*pathurl"), createnewdir)
+		authRouter.POST(("/mv"), mv)
 		authRouter.GET(("/sysinfo/disk"), diskinfo)
 	}
 }

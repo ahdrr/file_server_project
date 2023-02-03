@@ -66,7 +66,7 @@ func GinRecovery() gin.HandlerFunc {
 				lg.SugLog.Error("[Recovery from panic]",
 					zap.Any("error", err),
 					zap.String("request", string(httpRequest)),
-					zap.String("stack", string(debug.Stack())),
+					zap.String("stack", string(debug.Stack())), //打印详细错误
 				)
 				//if stack {
 				//	lg.SugLog.Error("[Recovery from panic]",

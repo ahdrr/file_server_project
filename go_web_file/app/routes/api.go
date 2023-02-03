@@ -5,8 +5,6 @@ import (
 	"filrserver/pkgs/files"
 	"filrserver/pkgs/model"
 	"filrserver/pkgs/systeminfo"
-
-	"io/fs"
 	"os"
 
 	//"filrserver/pkgs/zlog"
@@ -19,7 +17,7 @@ import (
 func get_realpath(c *gin.Context) (string, string) {
 	basedir := config.ViperConfig.GetString("basedir")
 	pathurl := c.Param("pathurl")
-	real_path := filepath.Join(basedir,c.GetString("role"), pathurl)
+	real_path := filepath.Join(basedir, c.GetString("role"), pathurl)
 	return pathurl, real_path
 }
 
@@ -52,11 +50,13 @@ func check_pathurl(c *gin.Context) (parse_request model.Parse_request_struct, er
 }
 
 func list(c *gin.Context) {
+	var request_list model.Parse_request_list
+	c.ShouldBind(&request_list)
 	parse_request, err := check_pathurl(c)
 	if err != nil {
 		return
 	}
-	fb, err := files.IterDirectory(parse_request)
+	fb, err := files.IterDirectory(parse_request, request_list.Onlydir)
 	if err != nil {
 		c.AbortWithStatusJSON(200, gin.H{
 			"code": 2003,
@@ -132,7 +132,7 @@ func delete(c *gin.Context) {
 		if err != nil {
 			c.AbortWithStatusJSON(200, gin.H{
 				"code": 2003,
-				"msg":  err.(*fs.PathError).Err.Error(),
+				"msg":  files.FileErrPars(err),
 			})
 		} else {
 			c.AbortWithStatusJSON(200, gin.H{
@@ -154,7 +154,7 @@ func delete(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(200, gin.H{
 			"code": 2003,
-			"msg":  err.(*fs.PathError).Err.Error(),
+			"msg":  files.FileErrPars(err),
 		},
 		)
 		return
@@ -189,7 +189,7 @@ func rename(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(200, gin.H{
 			"code": 2003,
-			"msg":  err.(*os.LinkError).Err.Error(),
+			"msg":  files.FileErrPars(err),
 		},
 		)
 		return
@@ -201,13 +201,32 @@ func rename(c *gin.Context) {
 	)
 }
 
+func mv(c *gin.Context) {
+	basedir := config.ViperConfig.GetString("basedir")
+	real_path := filepath.Join(basedir, c.GetString("role"))
+	var request_mv model.Parse_request_mv
+	gin.EnableJsonDecoderDisallowUnknownFields()
+	err := c.BindJSON(&request_mv)
+	if err != nil {
+		c.Error(err)
+		c.JSON(200, gin.H{
+			"code": 400,
+			"err":  "给定的json参数缺少或错误",
+		})
+		return
+	}
+	datas := files.Mvproject(real_path, &request_mv)
+	datas.Code = 200
+	c.JSON(200, datas)
+}
+
 func diskinfo(c *gin.Context) {
 	basedir := config.ViperConfig.GetString("basedir")
 	Diskinfo, e := systeminfo.GetDiskinfo(basedir)
 	if e != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"code": 500,
-			"msg":  e.(*fs.PathError).Err.Error(),
+			"msg":  files.FileErrPars(e),
 		})
 		return
 	}
@@ -231,7 +250,7 @@ func createnewdir(c *gin.Context) {
 	if err != nil {
 		c.AbortWithStatusJSON(200, gin.H{
 			"code": 2003,
-			"msg":  err.(*fs.PathError).Err.Error(),
+			"msg":  files.FileErrPars(err),
 		},
 		)
 		return

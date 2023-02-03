@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 var Basedir string
@@ -18,7 +19,7 @@ func Start() {
 	zlog.Init()
 	listenport := config.ViperConfig.GetString("port")
 	initGin := initRouter()
-	zlog.SugLog.Infof("服务初始化完成,监听端口为: %v", listenport)
+	zlog.SugLog.Infof("******服务初始化完成,监听端口为: %v******", listenport)
 	err := initGin.Run("0.0.0.0:" + listenport)
 	zlog.Fatalerror(err)
 }
@@ -27,8 +28,6 @@ func initRouter() *gin.Engine {
 	// 检查工作目录
 	basedir := config.ViperConfig.GetString("basedir")
 
-	_, err := os.Stat(basedir)
-	zlog.Fatalerror(err)
 	//设置运行模式
 	var ginmode string = config.ViperConfig.GetString("ginmode")
 	if ginmode == "release" {
@@ -51,17 +50,28 @@ func initRouter() *gin.Engine {
 	return r
 }
 
+func checkInitDir(real_path string) {
+	f, err := os.Stat(real_path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			os.MkdirAll(real_path, os.ModePerm)
+		} else {
+			zlog.Fatalerror(err)
+		}
+	} else {
+		if !f.IsDir() {
+			zlog.Logc.Fatal("初始化错误", zap.String(real_path, "已经存在同名文件,无法创建目录"))
+		}
+	}
+
+}
+
 func init_role_dir(basedir string) {
+	checkInitDir(basedir)
 	for _, u := range config.Users.Users {
-		go func(role string) {
-			real_path := filepath.Join(basedir, role)
-			_, err := os.Stat(real_path)
-			if err != nil && os.IsNotExist(err) {
-				os.MkdirAll(real_path, os.ModePerm)
-			} else {
-				zlog.Fatalerror(err)
-			}
-		}(u.Role)
+		real_path := filepath.Join(basedir, u.Role)
+		go checkInitDir(real_path)
+
 	}
 
 }

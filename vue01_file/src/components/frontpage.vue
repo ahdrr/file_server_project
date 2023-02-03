@@ -17,7 +17,7 @@
             :headers="getupheads()"
             multiple
             :before-upload="onBeforeUpload"
-            :limit="100"
+            :limit="1000"
             :on-exceed="handleExceed"
             :on-error="handupERR"
             :on-success="handupSuccess"
@@ -71,7 +71,7 @@
           <el-card>
             <!--搜索与添加区域-->
             <el-row :gutter="20">
-              <el-col :span="15">
+              <el-col :span="12">
                 <el-input
                   placeholder="请输入内容"
                   v-model="queryInfo.query"
@@ -85,12 +85,35 @@
                   ></el-button>
                 </el-input>
               </el-col>
-              <el-col :span="3" :push="3">
+              <el-col :span="2" :push="5">
                 <el-button type="primary" @click="addnewdir()"
                   >新建文件夹</el-button
                 >
               </el-col>
-              <el-col :span="1" :push="4">
+              <el-col :span="2" :push="6">
+                <el-button type="primary" @click="handleMvClick()"
+                  >移动目录</el-button
+                >
+                <el-dialog :visible.sync="dialogFormVisible" center>
+                  <div class="block">
+                    <span class="demonstration">选择目标位置</span>
+                    <el-cascader
+                      ref="myCascader"
+                      :props="props"
+                      clearable
+                    ></el-cascader>
+                  </div>
+                  <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisible = false"
+                      >取 消</el-button
+                    >
+                    <el-button type="primary" @click="handleMvConfirm()"
+                      >确 定</el-button
+                    >
+                  </div>
+                </el-dialog>
+              </el-col>
+              <el-col :span="2" :push="6">
                 <el-button
                   type="danger"
                   icon="el-icon-delete"
@@ -191,7 +214,6 @@
 import axios, { getRealurl } from '../axios.js'
 import VChart, { THEME_KEY } from 'vue-echarts'
 // import streamSaver from 'streamsaver'
-
 export default {
   components: {
     VChart
@@ -201,6 +223,44 @@ export default {
   },
   data () {
     return {
+      props: {
+        checkStrictly: true,
+        lazy: true,
+        lazyLoad (node, resolve) {
+          const { level } = node
+          let pathLabels = []
+          if (level === 0) {
+            resolve(
+              [{
+                value: 'basedir',
+                label: 'basedir',
+                leaf: level > 5
+              }]
+            )
+            return
+          }
+          pathLabels = node.pathLabels.slice(0)
+          pathLabels.splice(0, 1, '/')
+          const path = pathLabels.join('/')
+          axios.getFiles(
+            path,
+            JSON.stringify({ 'onlydir': true })
+          ).then((response) => {
+            if (response.data.code === 200) {
+              const nodes = Array.from(response.data.data)
+                .map(item => ({
+                  value: item.name,
+                  label: item.name,
+                  leaf: level > 5
+                }))
+              // 通过调用resolve将子节点数据返回，通知组件数据加载完成
+              resolve(nodes)
+            }
+          }
+          )
+        }
+      },
+      dialogFormVisible: false,
       option: {
         backgroundColor: '#FFFFFF', // rgba设置透明度0.1
         title: {
@@ -331,7 +391,44 @@ export default {
     this.parshPathurl()
   },
   methods: {
+    // 移动文件事件
+    handleMvClick () {
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          type: 'info',
+          message: '请勾选文件'
+        })
+        return
+      }
+      this.dialogFormVisible = true
+    },
+    // 移动确认动作
+    handleMvConfirm () {
+      const nodes = Array.from(this.multipleSelection)
+        .map(item => (item.name))
 
+      const pathLabels = this.$refs.myCascader.getCheckedNodes()[0].pathLabels.slice(0)
+      pathLabels.splice(0, 1, '/')
+      const path = pathLabels.join('/')
+
+      let data = JSON.stringify({
+        'filelist': nodes,
+        'dstdir': path
+      })
+
+      axios.multipleMoves(data
+      ).then((response) => {
+        if (response.data.code === 200) {
+          this.$message.success(response.data.msg)
+          this.getFileList()
+        } else {
+          this.$message.error('服务异常')
+        }
+      }
+      )
+
+      this.dialogFormVisible = false
+    },
     handleSelectionChange (val) {
       this.multipleSelection = val
     },
@@ -584,7 +681,7 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         inputPattern: /^\w+$/,
-        inputErrorMessage: '邮箱格式不正确'
+        inputErrorMessage: '文件格式不正确'
       }).then(({ value }) => {
         let realpath = this.getRealpath() + row.name
         let data = JSON.stringify({
@@ -658,7 +755,7 @@ export default {
     },
     // 文件上传数量超出触发函数
     handleExceed (files, fileList) {
-      this.$message.warning(`当前限制选择 100 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+      this.$message.warning(`当前限制选择 1000 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
     },
     // 获取上传文件接口
     getupRealpath () {

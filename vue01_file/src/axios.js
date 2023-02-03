@@ -57,10 +57,9 @@ export default {
     return axios.post('/api/login', data)
   },
   // 获取文件
-  getFiles (filepath) {
+  getFiles (filepath, ...data) {
     let realurl = getRealurl('/api/list', filepath)
-
-    return instance.get(realurl)
+    return instance.post(realurl, ...data)
   },
   // 下载文件
   download (filepath, ...data) {
@@ -76,6 +75,9 @@ export default {
   removefile (filepath, ...data) {
     let realurl = getRealurl('/api/del', filepath)
     return instance.post(realurl, ...data)
+  },
+  multipleMoves (...data) {
+    return instance.post('/api/mv', ...data)
   },
   // 新建文件夹
   createnewdir (filepath, ...data) {
