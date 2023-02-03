@@ -432,6 +432,7 @@ export default {
     handleSelectionChange (val) {
       this.multipleSelection = val
     },
+
     async multipleDelete () {
       if (this.multipleSelection.length === 0) {
         this.$message({
@@ -463,8 +464,8 @@ export default {
           }
         }
         this.$message.success(successnm + '个删除成功, ' + faildnm + '个删除失败')
+        this.getFileList()
       })
-      this.getFileList()
       this.multipleSelection = []
     },
 
