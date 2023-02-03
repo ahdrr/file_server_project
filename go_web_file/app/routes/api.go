@@ -126,23 +126,6 @@ func delete(c *gin.Context) {
 	if err != nil {
 		return
 	}
-
-	if !parse_request.Statinfo.IsDir() {
-		err := os.Remove(parse_request.Real_path)
-		if err != nil {
-			c.AbortWithStatusJSON(200, gin.H{
-				"code": 2003,
-				"msg":  files.FileErrPars(err),
-			})
-		} else {
-			c.AbortWithStatusJSON(200, gin.H{
-				"code": 200,
-				"msg":  "failed deleteed",
-			})
-		}
-		return
-	}
-
 	if parse_request.Real_path == config.ViperConfig.GetString("basedir") {
 		c.AbortWithStatusJSON(200, gin.H{
 			"code": 2003,
@@ -161,7 +144,7 @@ func delete(c *gin.Context) {
 	}
 	c.AbortWithStatusJSON(200, gin.H{
 		"code": 200,
-		"msg":  "dir is delete",
+		"msg":  "delete ok",
 	},
 	)
 
