@@ -43,7 +43,7 @@ function getRealurl (url, filepath) {
   if (!filepath) {
     return url + '/'
   }
-  return url + filepath
+  return url + encodeURIComponent(filepath)
 }
 export {getRealurl}
 export default {

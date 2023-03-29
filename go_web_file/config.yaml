@@ -3,7 +3,7 @@ logfile: "/var/log/server.log"
 #日志级别
 loglevel: "debug"
 #工作目录
-basedir: "/basedir"
+basedir: "/tmp/basedir"
 #可选debug调试模式，release生产模式
 ginmode: "release" 
 # 监听端口
