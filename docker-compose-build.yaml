@@ -1,11 +1,11 @@
 version: "3"
 services:
   go_fileserver:
-    image: ahdrr/go_fileserver:2022_12_12
+    image: ahdrr/go_fileserver:2023_03_29
     build:
       context: ./go_web_file
       dockerfile: dockerfile
-    container_name: go_file_server
+    container_name: go_fileserver
     environment:
       - TZ=Asia/Shanghai
     ports:
@@ -19,7 +19,7 @@ services:
               - file_api_server
 
   nginx_vue:
-    image: ahdrr/nginx_vue:2022_12_12
+    image: ahdrr/nginx_vue:2023_03_29
     build:
       context: ./vue01_file
       dockerfile: dockerfile
