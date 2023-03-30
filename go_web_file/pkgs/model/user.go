@@ -1,7 +1,8 @@
 package model
 
 type Usersc struct {
-	Users []User `yaml:"users"`
+	Users    []User `yaml:"users"`
+	UserDirsMap map[string]bool
 }
 
 type User struct {

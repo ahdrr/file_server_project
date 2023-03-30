@@ -15,4 +15,4 @@ users:
     -
         username: "aa"
         password: "1"
-        role: '/'
+        role: '/test'

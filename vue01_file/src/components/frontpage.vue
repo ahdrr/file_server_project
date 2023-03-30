@@ -211,7 +211,7 @@
 </template>
 
 <script>
-import axios, { getRealurl } from '../axios.js'
+import axios from '../axios.js'
 import VChart, { THEME_KEY } from 'vue-echarts'
 // import streamSaver from 'streamsaver'
 export default {
@@ -625,7 +625,7 @@ export default {
     // 下载文件
     async downloadfile (row) {
       let realpath = this.getRealpath() + row.name
-      let realurl = getRealurl('/api/down', realpath + '?token=' + this.$store.state.token)
+      let realurl = '/api/down' + encodeURIComponent(realpath) + '?token=' + this.$store.state.token
       location.href = realurl
       // fetch(realurl, {
       //  method: 'GET',

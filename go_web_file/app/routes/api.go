@@ -121,12 +121,16 @@ func up(c *gin.Context) {
 	})
 }
 
+func beforChangeCheck(path string) bool {
+	return config.Users.UserDirsMap[path]
+}
+
 func delete(c *gin.Context) {
 	parse_request, err := check_pathurl(c)
 	if err != nil {
 		return
 	}
-	if parse_request.Real_path == config.ViperConfig.GetString("basedir") {
+	if beforChangeCheck(parse_request.Real_path) {
 		c.AbortWithStatusJSON(200, gin.H{
 			"code": 2003,
 			"msg":  "cat not delete {{basedir}}",
@@ -156,7 +160,7 @@ func rename(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	if parse_request.Real_path == config.ViperConfig.GetString("basedir") {
+	if beforChangeCheck(parse_request.Real_path) {
 		c.AbortWithStatusJSON(200, gin.H{
 			"code": 2003,
 			"msg":  "cat not rename {{basedir}}",
@@ -187,6 +191,13 @@ func rename(c *gin.Context) {
 func mv(c *gin.Context) {
 	basedir := config.ViperConfig.GetString("basedir")
 	real_path := filepath.Join(basedir, c.GetString("role"))
+	if beforChangeCheck(real_path) {
+		c.AbortWithStatusJSON(200, gin.H{
+			"code": 2003,
+			"msg":  "cat not mv {{basedir}}",
+		})
+		return
+	}
 	var request_mv model.Parse_request_mv
 	gin.EnableJsonDecoderDisallowUnknownFields()
 	err := c.BindJSON(&request_mv)
