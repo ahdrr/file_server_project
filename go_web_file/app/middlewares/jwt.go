@@ -29,11 +29,24 @@ var (
 	TokenInvalid     error  = errors.New("Couldn't handle this token")
 )
 
+func returnExpiredTokenErr(ctx *gin.Context, token string) {
+	zlog.SugLog.Warn("token 过期", zap.Any("data", map[string]interface{}{
+		"url":         ctx.Request.URL,
+		"params":      ctx.Params,
+		"tokenString": token,
+	}))
+	ctx.JSON(http.StatusUnauthorized, gin.H{
+		"error_code": 1,
+		"message":    "授权已过期",
+		"data":       map[string]interface{}{},
+	})
+	ctx.Abort()
+}
+
 // JWTAuth 中间件，检查token
 func JWTAuth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		tokenString := ctx.Request.Header.Get("token")
-
 
 		if tokenString == "" {
 			tokenString = ctx.Query("token")
@@ -62,17 +75,7 @@ func JWTAuth() gin.HandlerFunc {
 		parse_relustr, err := ParseToken(tokenString)
 		if err != nil {
 			if err == TokenExpired {
-				zlog.SugLog.Warn("token 过期", zap.Any("data", map[string]interface{}{
-					"url":         ctx.Request.URL,
-					"params":      ctx.Params,
-					"tokenString": tokenString,
-				}))
-				ctx.JSON(http.StatusUnauthorized, gin.H{
-					"error_code": 1,
-					"message":    "授权已过期",
-					"data":       map[string]interface{}{},
-				})
-				ctx.Abort()
+				returnExpiredTokenErr(ctx, tokenString)
 				return
 			}
 			zlog.SugLog.Error("token 错误", zap.Any("data", map[string]interface{}{
@@ -86,8 +89,16 @@ func JWTAuth() gin.HandlerFunc {
 			})
 			ctx.Abort()
 			return
+		} else {
+			if config.Users.UserRoleMap[parse_relustr.Username] != parse_relustr.Role {
+				returnExpiredTokenErr(ctx, tokenString)
+				return
+			}
+
 		}
-		ctx.Set("role", parse_relustr.Role)
+		if !ctx.GetBool("role") {
+			ctx.Set("role", parse_relustr.Role)
+		}
 	}
 }
 

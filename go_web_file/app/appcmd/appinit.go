@@ -68,10 +68,13 @@ func checkInitDir(real_path string) {
 
 func init_role_dir(basedir string) {
 	checkInitDir(basedir)
-	config.Users.UserDirsMap = make(map[string]bool, len(config.Users.Users)+1)
+	listnum := len(config.Users.Users)
+	config.Users.UserDirsMap = make(map[string]bool, listnum+1)
+	config.Users.UserRoleMap = make(map[string]string, listnum)
 	for _, u := range config.Users.Users {
 		real_path := filepath.Join(basedir, u.Role)
 		config.Users.UserDirsMap[real_path] = true
+		config.Users.UserRoleMap[u.Username] = u.Role
 		go checkInitDir(real_path)
 	}
 	config.Users.UserDirsMap[basedir] = true

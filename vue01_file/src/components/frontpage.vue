@@ -624,6 +624,10 @@ export default {
     },
     // 下载文件
     async downloadfile (row) {
+      if (row.filetype === 'dir') {
+        this.$message.error('暂时不支持目录下载')
+        return
+      }
       let realpath = this.getRealpath() + row.name
       let realurl = '/api/down' + encodeURIComponent(realpath) + '?token=' + this.$store.state.token
       location.href = realurl

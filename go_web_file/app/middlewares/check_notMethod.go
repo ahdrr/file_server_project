@@ -1,6 +1,8 @@
 package middlewares
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 func Check_notMethod(method string) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -9,7 +11,7 @@ func Check_notMethod(method string) gin.HandlerFunc {
 				"code": 2001,
 				"msg":  "please use " + method + "...",
 			})
-			return
+			//return
 		}
 	}
 }

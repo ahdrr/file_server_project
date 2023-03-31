@@ -1,6 +1,7 @@
 package files
 
 import (
+	"filrserver/pkgs/config"
 	"filrserver/pkgs/model"
 	"filrserver/pkgs/zlog"
 	"fmt"
@@ -117,10 +118,14 @@ func Mvproject(real_path string, request_mv *model.Parse_request_mv) model.MvRes
 		wg.Add(1)
 		go func(s string, respchan chan model.Mverr) {
 			spath := filepath.Join(real_path, s)
-			sbase := filepath.Base(spath)
-			newfile := filepath.Join(real_path, request_mv.Dstdir, sbase)
-			err := os.Rename(spath, newfile)
-			respchan <- model.Mverr{Name: s, Err: FileErrPars(err)}
+			if BeforFileChangeCheck(spath) {
+				respchan <- model.Mverr{Name: s, Err: "cat not mv user home dir"}
+			} else {
+				sbase := filepath.Base(spath)
+				newfile := filepath.Join(real_path, request_mv.Dstdir, sbase)
+				err := os.Rename(spath, newfile)
+				respchan <- model.Mverr{Name: s, Err: FileErrPars(err)}
+			}
 			wg.Done()
 		}(s, responseChannel)
 	}
@@ -149,4 +154,8 @@ func Mvproject(real_path string, request_mv *model.Parse_request_mv) model.MvRes
 		Err: *errs,
 	}
 
+}
+
+func BeforFileChangeCheck(path string) bool {
+	return config.Users.UserDirsMap[path] 
 }
