@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div style="width:100%">
     <!-- 边侧导航区域-->
-    <el-container style="height: 790px">
-      <el-container style="height: 800px; border: 1px solid #eceff0">
+    <div style="height: 790px;display: flex;height: 100vh;width:100%">
+      <el-container style="height: 100%; border: 1px solid #eceff0;min-width: 360px;">
         <!-- 边侧导航区域-->
         <el-header width="20">
           <p class="one">♩</p>
@@ -32,14 +32,13 @@
       </el-container>
 
       <!--用户列表区域-->
-      <el-container
-        style="height: 800px;rgb(152, 191, 33);border: 1px solid #eee"
-      >
-        <el-main style="text-align: right; font-size: 11px ;">
+      <div style="min-width:1200px;overflow-x:scroll;width: 1680px">
+        <!-- <el-main style="text-align: right; font-size: 11px;min-width: 1000px;overflow-x: scroll;"> -->
           <!--卡片试图区域-->
           <el-card>
+            <!--搜索与添加区域-->
             <el-row :gutter="1">
-              <el-col :span="11">
+              <el-col :span="z11">
                 <!-- 面包屑导航区域-->
                 <el-breadcrumb separator=">">
                   <el-breadcrumb-item
@@ -67,85 +66,59 @@
           </el-card>
 
           <!--卡片试图区域-->
-          <el-card >
+          <el-card style="width:100%">
             <!--搜索与添加区域-->
-            <el-row >
-                <el-col  style="display: flex; flex-wrap: nowrap;">
-
-                  <el-input
-                    placeholder="请输入内容"
-                    v-model="queryInfo.query"
-                    clearable
-                    @clear="getFileList"
-                  >
-                    <el-button
-                      slot="prepend"
-                      icon="el-icon-search"
-                      @click="searchFileList"
-                              style="
-                      width: 50x;
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                    "
-                    ></el-button>
-                  </el-input>
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-input
+                  placeholder="请输入内容"
+                  v-model="queryInfo.query"
+                  clearable
+                  @clear="getFileList"
+                >
                   <el-button
-                    type="primary"
-                    @click="addnewdir()"
-                    style="
-                      width: 60px;
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                      margin-left: 8px;
-                    "
-                    >新建</el-button
-                  >
-                  <el-button
-                    type="primary"
-                    @click="handleMvClick()"
-                    style="
-                      width: 60px;
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                      margin-right: 8px;
-                    "
-                    >移动</el-button
-                  >
-                  <el-dialog :visible.sync="dialogFormVisible" center>
-                    <div class="block">
-                      <span class="demonstration">选择目标位置</span>
-                      <el-cascader
-                        ref="myCascader"
-                        :props="props"
-                        clearable
-                      ></el-cascader>
-                    </div>
-                    <div slot="footer" class="dialog-footer">
-                      <el-button @click="dialogFormVisible = false"
-                        >取 消</el-button
-                      >
-                      <el-button type="primary" @click="handleMvConfirm()"
-                        >确 定</el-button
-                      >
-                    </div>
-                  </el-dialog>
-                  <el-button
-                    type="danger"
-                    icon="el-icon-delete"
-                    @click="multipleDelete()"
-                    style="
-                      width: 60px;
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                    "
-                  >
-                  </el-button>
-
-                </el-col>
+                    slot="append"
+                    icon="el-icon-search"
+                    @click="searchFileList"
+                  ></el-button>
+                </el-input>
+              </el-col>
+              <el-col :span="2" :push="5">
+                <el-button type="primary" @click="addnewdir()" style="margin-right:10px"
+                  >新建文件夹</el-button
+                >
+              </el-col>
+              <el-col :span="2" :push="6">
+                <el-button type="primary" @click="handleMvClick()" style="margin-right:10px"
+                  >移动目录</el-button
+                >
+                <el-dialog :visible.sync="dialogFormVisible" center>
+                  <div class="block">
+                    <span class="demonstration">选择目标位置</span>
+                    <el-cascader
+                      ref="myCascader"
+                      :props="props"
+                      clearable
+                    ></el-cascader>
+                  </div>
+                  <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisible = false"
+                      >取 消</el-button
+                    >
+                    <el-button type="primary" @click="handleMvConfirm()"
+                      >确 定</el-button
+                    >
+                  </div>
+                </el-dialog>
+              </el-col>
+              <el-col :span="2" :push="6">
+                <el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  @click="multipleDelete()"
+                >
+                </el-button>
+              </el-col>
             </el-row>
           </el-card>
           <el-table
@@ -228,9 +201,14 @@
             >
             </el-pagination>
           </el-footer>
-        </el-main>
-      </el-container>
-    </el-container>
+        <!-- </el-main> -->
+      </div>
+      <!-- <el-container
+        style="height: 100%;rgb(152, 191, 33);border: 1px solid #eee;"
+      >
+
+      </el-container> -->
+    </div>
   </div>
 </template>
 
@@ -853,5 +831,4 @@ p.one {
   padding-bottom: 0px;
   padding-left: 0px;
 }
-
 </style>
