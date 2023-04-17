@@ -1,0 +1,147 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    kubernetes.io/metadata.name: test
+  name: test
+
+#---
+#apiVersion: v1
+#kind: PersistentVolumeClaim
+#metadata:
+#  name: godata-pvc
+#spec:
+#  #storageClassName: rook-ceph-block #该类型storageClass不支持多pod挂载
+#  storageClassName: rook-cephfs
+#  accessModes:
+#    - ReadWriteMany
+#  resources:
+#    requests:
+#      storage: 5Gi
+
+---
+
+#后端Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: fileserver-backend-service
+spec:
+  ports:
+    - port: 16650
+      targetPort: 16650
+  selector:
+    app: fileserver-backend
+
+---
+#后端
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fileserver-backend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fileserver-backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: fileserver-backend
+    spec:
+      containers:
+        - name: gofileserver
+          resources:
+            limits:
+              cpu: "0"
+              memory: "0"
+          image: ahdrr/go_fileserver:v3.0
+          ports:
+            - containerPort: 16650
+          volumeMounts:
+            - name: fileserver-conf
+              mountPath: /etc/goconf/config.yaml
+              subPath: config.yaml
+          #  - name: go-data-volume
+          #    mountPath: /basedir
+      volumes:
+        #- name: go-data-volume
+        #  persistentVolumeClaim:
+        #    claimName: godata-pvc
+        - name: fileserver-conf
+          configMap:
+            name: fileserver-conf
+
+---
+#前端Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: fileserver-frontend-service
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: fileserver-frontend
+
+---
+#前端
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fileserver-frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fileserver-frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: fileserver-frontend
+    spec:
+      containers:
+        - name: nginx-vue
+          resources:
+            limits:
+              cpu: "0"
+              memory: "0"
+          image: ahdrr/nginx_vue:v3.0
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: fileserver-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+      volumes:
+        - name: fileserver-conf
+          configMap:
+            name: fileserver-conf
+
+---
+#nginx代理到前端
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fileserver-ingress
+  namespace: test
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+spec:
+  ingressClassName: "nginx"  #控制器的类型为nginx
+  rules:
+  - host: test.fileserver.com
+    http:
+      paths:
+      - path: /  #匹配请求路径
+        pathType: Prefix
+        backend:
+          service:
+            name: fileserver-frontend-service  # service名称
+            port:    # 后端端口
+              number: 80

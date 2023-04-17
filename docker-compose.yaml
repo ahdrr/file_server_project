@@ -13,7 +13,7 @@ services:
     networks:
         file_server_net:
            aliases:
-              - file_api_server
+              - fileserver-backend-service
 
   nginx_vue:
     image: ahdrr/nginx_vue:v3.0
