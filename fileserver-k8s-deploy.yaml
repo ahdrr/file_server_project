@@ -132,6 +132,7 @@ metadata:
   name: fileserver-ingress
   namespace: test
   annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10240m"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
   ingressClassName: "nginx"  #控制器的类型为nginx
