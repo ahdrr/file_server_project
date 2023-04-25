@@ -24,7 +24,7 @@
 
     kubectl create configmap fileserver-conf --from-file=goconf/config.yaml --from-file=nginx_conf/default.conf -n test
     
-    kubectl apply -f fileserver-k8s-deploy.yaml
+    kubectl apply -f fileserver-k8s-deploy.yaml -n test
     ```
 
 
