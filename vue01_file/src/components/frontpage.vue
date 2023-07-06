@@ -35,7 +35,7 @@
       <el-container
         style="height: 800px;rgb(152, 191, 33);border: 1px solid #eee"
       >
-        <el-main style="text-align: right; font-size: 11px ;">
+        <el-main style="text-align: right; font-size: 11px">
           <!--卡片试图区域-->
           <el-card>
             <el-row :gutter="1">
@@ -67,85 +67,83 @@
           </el-card>
 
           <!--卡片试图区域-->
-          <el-card >
+          <el-card>
             <!--搜索与添加区域-->
-            <el-row >
-                <el-col  style="display: flex; flex-wrap: nowrap;">
-
-                  <el-input
-                    placeholder="请输入内容"
-                    v-model="queryInfo.query"
-                    clearable
-                    @clear="getFileList"
-                  >
-                    <el-button
-                      slot="prepend"
-                      icon="el-icon-search"
-                      @click="searchFileList"
-                              style="
+            <el-row>
+              <el-col style="display: flex; flex-wrap: nowrap">
+                <el-input
+                  placeholder="请输入内容"
+                  v-model="queryInfo.query"
+                  clearable
+                  @clear="getFileList"
+                >
+                  <el-button
+                    slot="prepend"
+                    icon="el-icon-search"
+                    @click="searchFileList"
+                    style="
                       width: 50x;
                       display: flex;
                       justify-content: center;
                       align-items: center;
                     "
-                    ></el-button>
-                  </el-input>
-                  <el-button
-                    type="primary"
-                    @click="addnewdir()"
-                    style="
-                      width: 60px;
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                      margin-left: 8px;
-                    "
-                    >新建</el-button
-                  >
-                  <el-button
-                    type="primary"
-                    @click="handleMvClick()"
-                    style="
-                      width: 60px;
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                      margin-right: 8px;
-                    "
-                    >移动</el-button
-                  >
-                  <el-dialog :visible.sync="dialogFormVisible" center>
-                    <div class="block">
-                      <span class="demonstration">选择目标位置</span>
-                      <el-cascader
-                        ref="myCascader"
-                        :props="props"
-                        clearable
-                      ></el-cascader>
-                    </div>
-                    <div slot="footer" class="dialog-footer">
-                      <el-button @click="dialogFormVisible = false"
-                        >取 消</el-button
-                      >
-                      <el-button type="primary" @click="handleMvConfirm()"
-                        >确 定</el-button
-                      >
-                    </div>
-                  </el-dialog>
-                  <el-button
-                    type="danger"
-                    icon="el-icon-delete"
-                    @click="multipleDelete()"
-                    style="
-                      width: 60px;
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                    "
-                  >
-                  </el-button>
-
-                </el-col>
+                  ></el-button>
+                </el-input>
+                <el-button
+                  type="primary"
+                  @click="addnewdir()"
+                  style="
+                    width: 60px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-left: 8px;
+                  "
+                  >新建</el-button
+                >
+                <el-button
+                  type="primary"
+                  @click="handleMvClick()"
+                  style="
+                    width: 60px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-right: 8px;
+                  "
+                  >移动</el-button
+                >
+                <el-dialog :visible.sync="dialogFormVisible" center>
+                  <div class="block">
+                    <span class="demonstration">选择目标位置</span>
+                    <el-cascader
+                      ref="myCascader"
+                      :props="props"
+                      clearable
+                    ></el-cascader>
+                  </div>
+                  <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogFormVisible = false"
+                      >取 消</el-button
+                    >
+                    <el-button type="primary" @click="handleMvConfirm()"
+                      >确 定</el-button
+                    >
+                  </div>
+                </el-dialog>
+                <el-button
+                  type="danger"
+                  icon="el-icon-delete"
+                  @click="multipleDelete()"
+                  style="
+                    width: 60px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                </el-button>
+              </el-col>
             </el-row>
           </el-card>
           <el-table
@@ -183,6 +181,7 @@
               label="创建日期"
               prop="time"
               width="160px"
+              sortable
             ></el-table-column>
             <el-table-column
               label="大小"
@@ -853,5 +852,4 @@ p.one {
   padding-bottom: 0px;
   padding-left: 0px;
 }
-
 </style>
