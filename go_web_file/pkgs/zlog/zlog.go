@@ -72,7 +72,7 @@ func getConfiglevel() (level zapcore.Level) {
 	if err == nil {
 		return level
 	}
-        level, _ := zapcore.ParseLevel("INFO")
+        level, _ = zapcore.ParseLevel("INFO")
         return level
 }
 
