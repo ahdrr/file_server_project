@@ -69,12 +69,11 @@ func Init() {
 func getConfiglevel() (level zapcore.Level) {
 	level, err := zapcore.ParseLevel(loglevel)
 	//返回
-	if err != nil {
-		return level
-	} else {
-		level, _ := zapcore.ParseLevel("INFO")
+	if err == nil {
 		return level
 	}
+        level, _ := zapcore.ParseLevel("INFO")
+        return level
 }
 
 // 自定义时间编码器
